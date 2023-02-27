@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '237000125461',
     projectId: 'flutter-memo-app-d6448',
     storageBucket: 'flutter-memo-app-d6448.appspot.com',
-    iosClientId: '237000125461-9ba8iegpi2dqv8rginkadet1phpipjse.apps.googleusercontent.com',
+    iosClientId:
+        '237000125461-9ba8iegpi2dqv8rginkadet1phpipjse.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterFirebaseMemoApp',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '237000125461',
     projectId: 'flutter-memo-app-d6448',
     storageBucket: 'flutter-memo-app-d6448.appspot.com',
-    iosClientId: '237000125461-9ba8iegpi2dqv8rginkadet1phpipjse.apps.googleusercontent.com',
+    iosClientId:
+        '237000125461-9ba8iegpi2dqv8rginkadet1phpipjse.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterFirebaseMemoApp',
   );
 }

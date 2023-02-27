@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_memo_app/model/memo.dart';
+import 'package:flutter_firebase_memo_app/pages/memo_detail_page.dart';
 
 class TopPage extends StatefulWidget {
   const TopPage({super.key, required this.title});
@@ -45,6 +46,14 @@ class _TopPageState extends State<TopPage> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(memoList[index].title),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MemoDetailPage(memo: memoList[index]),
+                ),
+              );
+            },
           );
         },
       ),
