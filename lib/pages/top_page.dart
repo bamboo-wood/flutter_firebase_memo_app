@@ -14,27 +14,7 @@ class TopPage extends StatefulWidget {
 }
 
 class _TopPageState extends State<TopPage> {
-  List<Memo> memoList = [];
-
-  Future<void> fetchMemo() async {
-    final memoCollection =
-        await FirebaseFirestore.instance.collection('memo').get();
-
-    final docs = memoCollection.docs;
-
-    for (var doc in docs) {
-      Memo fetchedMemo = Memo.fromJson(doc.data());
-      memoList.add(fetchedMemo);
-    }
-
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchMemo();
-  }
+  final memoCollection = FirebaseFirestore.instance.collection('memo');
 
   @override
   Widget build(BuildContext context) {
@@ -42,22 +22,38 @@ class _TopPageState extends State<TopPage> {
       appBar: AppBar(
         title: const Text('Flutter x Firebase'),
       ),
-      body: ListView.builder(
-        itemCount: memoList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(memoList[index].title),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MemoDetailPage(memo: memoList[index]),
-                ),
-              );
-            },
-          );
-        },
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: memoCollection.snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: Text('No Data.'));
+            }
+
+            final docs = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> data =
+                    docs[index].data() as Map<String, dynamic>;
+                final Memo memo = Memo.fromJson(data);
+                return ListTile(
+                  title: Text(memo.title),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MemoDetailPage(memo: memo),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,

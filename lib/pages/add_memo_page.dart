@@ -14,14 +14,13 @@ class _AddMemoPageState extends State<AddMemoPage> {
   TextEditingController detailController = TextEditingController();
 
   Future<void> createMemo() async {
-    final memoCollection = FirebaseFirestore.instance.collection('memo');
-
     Memo memo = Memo(
       title: titleController.text,
       detail: detailController.text,
       createdDate: DateTime.now(),
     );
 
+    final memoCollection = FirebaseFirestore.instance.collection('memo');
     await memoCollection.add(memo.toJson());
   }
 
