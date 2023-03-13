@@ -16,6 +16,11 @@ class TopPage extends StatefulWidget {
 class _TopPageState extends State<TopPage> {
   final memoCollection = FirebaseFirestore.instance.collection('memo');
 
+  Future<void> deleteMemo(String id) async {
+    final doc = memoCollection.doc(id);
+    await doc.delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +28,9 @@ class _TopPageState extends State<TopPage> {
         title: const Text('Flutter x Firebase'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: memoCollection.snapshots(),
+          stream: memoCollection
+              .orderBy('createdDate', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -72,9 +79,13 @@ class _TopPageState extends State<TopPage> {
                                     leading: const Icon(Icons.edit),
                                     title: const Text('編集'),
                                   ),
-                                  const ListTile(
-                                    leading: Icon(Icons.delete),
-                                    title: Text('削除'),
+                                  ListTile(
+                                    onTap: () async {
+                                      await deleteMemo(fetchMemo.id);
+                                      Navigator.pop(context);
+                                    },
+                                    leading: const Icon(Icons.delete),
+                                    title: const Text('削除'),
                                   ),
                                 ],
                               ),
