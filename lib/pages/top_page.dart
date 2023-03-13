@@ -35,7 +35,7 @@ class _TopPageState extends State<TopPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             }
-            if (!snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data!.size == 0) {
               return const Center(child: Text('No Data.'));
             }
 
