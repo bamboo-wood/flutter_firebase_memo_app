@@ -2,33 +2,53 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_memo_app/model/memo.dart';
 
-class AddMemoPage extends StatefulWidget {
-  const AddMemoPage({super.key});
+class AddEditMemoPage extends StatefulWidget {
+  final Memo? currentMemo;
+  const AddEditMemoPage({super.key, this.currentMemo});
 
   @override
-  State<AddMemoPage> createState() => _AddMemoPageState();
+  State<AddEditMemoPage> createState() => _AddEditMemoPageState();
 }
 
-class _AddMemoPageState extends State<AddMemoPage> {
+class _AddEditMemoPageState extends State<AddEditMemoPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController detailController = TextEditingController();
 
   Future<void> createMemo() async {
-    Memo memo = Memo(
-      title: titleController.text,
-      detail: detailController.text,
-      createdDate: DateTime.now(),
-    );
-
     final memoCollection = FirebaseFirestore.instance.collection('memo');
-    await memoCollection.add(memo.toJson());
+    await memoCollection.add({
+      'title': titleController.text,
+      'detail': detailController.text,
+      'createdDate': Timestamp.now(),
+    });
+  }
+
+  Future<void> updateMemo() async {
+    final doc = FirebaseFirestore.instance
+        .collection('memo')
+        .doc(widget.currentMemo!.id);
+
+    await doc.update({
+      'title': titleController.text,
+      'detail': detailController.text,
+      'updatedDate': Timestamp.now(),
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.currentMemo != null) {
+      titleController.text = widget.currentMemo!.title;
+      detailController.text = widget.currentMemo!.detail;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("メモ追加"),
+        title: Text(widget.currentMemo == null ? "Add Memo" : "Edit Memo"),
       ),
       body: Center(
         child: Column(
@@ -70,10 +90,14 @@ class _AddMemoPageState extends State<AddMemoPage> {
               alignment: Alignment.center,
               child: ElevatedButton(
                 onPressed: () async {
-                  await createMemo();
+                  if (widget.currentMemo == null) {
+                    await createMemo();
+                  } else {
+                    await updateMemo();
+                  }
                   Navigator.pop(context);
                 },
-                child: const Text('Add'),
+                child: Text(widget.currentMemo == null ? "Add" : "Update"),
               ),
             )
           ],
